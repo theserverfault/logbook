@@ -7,6 +7,4 @@
  * @since Wednesday, December 19, 2018
  */
 import Service from './src/service';
-export default {
-	PluginService: Service,
-};
+export default Service;
