@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>logbook</title>
+		<style>
+			@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+			*{
+				font-family: 'Roboto Mono';
+				padding: 0;
+				margin: 0;
+			}
+			body {
+				background: #000;
+				color: #79f86f;
+			}
+			#connection-status {
+				padding: 10px;
+				border: solid 1px silver;
+				border-radius: 5px;
+			}
+			#logs-section {
+				padding: 10px;
+			}
+			#realtime-logs {
+				padding: 20px;
+				max-height: 400px;
+				min-height: 400px;
+				background: #383838;
+				margin-top: 10px;
+				border-radius: 5px;
+				overflow-y: scroll;
+			}
+			#footer {
+				text-align: center;
+			}
+			.link {
+				text-decoration: underline;
+				color: #4b96f8;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>
+			Logbook
+		</h1>
+		<p>Connection Status: <b id='connection-status'>Disconnected</b></p><br /><br />
+		<section id='logs-section'>
+			Realime application logs
+			<section id='realtime-logs'>
+			</section>
+		</section><br /><br />
+		<p id='footer'>
+			<img src='https://avatars3.githubusercontent.com/u/46002845?s=200&v=4' height=50 width=50 /><br />
+			Developed and Maintained by pluginfactory @github. Show love by giving stars at <a class='link'
+				href='https://github.com/pluginfactory/logbook' target='_blank'>https://github.com/pluginfactory/logbook</a>
+		</p>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js'></script>
+		<script>
+			const socket = io.connect('http://localhost:9001/');
+			socket.on('logbook-connected', (data) => {
+				console.log(data.length);
+				data.map(datum => {
+					const { date, payload } = datum;
+					document.getElementById('realtime-logs').innerHTML += `${date}&nbsp;&nbsp;&nbsp;${JSON.stringify(payload)}<br/>`;
+					// scroll to bottom
+					goToBottom('realtime-logs');
+				})
+				document.getElementById('connection-status').innerHTML = 'Connected';
+			});
+			socket.on('logs-data-received', data => {
+				const { date, payload } = data;
+				document.getElementById('realtime-logs').innerHTML += `${date}&nbsp;&nbsp;&nbsp;${JSON.stringify(payload)}<br/>`;
+				goToBottom('realtime-logs');
+				// document.getElementById('realtime-logs').innerHTML = JSON.stringify(data);
+			})
+			socket.on('disconnect', () => {
+				document.getElementById('connection-status').innerHTML = 'Disconnected';
+			});
+
+			const goToBottom = id => {
+				const element = document.getElementById(id);
+				element.scrollTop = element.scrollHeight - element.clientHeight;
+			}
+		</script>
+	</body>
+</html>
