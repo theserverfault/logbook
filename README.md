@@ -15,3 +15,7 @@ P.S. The app have to implement the logbook wrapper to communicate logs with the 
 2. The logs are realtime and hence could be visualized without accessing physical server.It suits dest for development environments.
 3. The logs are kept separate from the API server and hence avoid I/O payoffs that server has to handle while handling logs within API server.
 4. Logs can be accessed by large teams with the URL. no dependency on the backend developer.
+
+
+## Download
+You can download logbook as official docker image from [here](https://hub.docker.com/r/pluginfactory/logbook)
