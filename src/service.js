@@ -7,8 +7,6 @@ import fs from 'fs';
  * and happy coding.
  * @author gaurav sharma
  * @since 19th December 2018
- *
- * @param {Object} server an express server instance
  */
 const encoding = 'utf-8';
 const handler = (req, res) => {
@@ -48,5 +46,5 @@ io.on('connection', (socket) => {
 	})
 });
 
-const port = process.env.LOGBOOK_PORT || 9001;
+const port = 49100;
 server.listen(port, done => console.log(`socket.io running on port ${port}`));

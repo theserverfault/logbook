@@ -56,7 +56,7 @@
 		</p>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js'></script>
 		<script>
-			const socket = io.connect('http://localhost:9001/');
+			const socket = io.connect('http://localhost:49100/');
 			socket.on('logbook-connected', (data) => {
 				console.log(data.length);
 				data.map(datum => {
