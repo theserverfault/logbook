@@ -18,8 +18,6 @@ const handler = (req, res) => {
 			const content = fs.readFileSync('src/web/index.html', { encoding });
 			res.writeHead(200, { 'Content-Type': contentType });
 			res.end(content, encoding);
-			// const data = JSON.parse(fs.readFileSync('logs/logs.json', { encoding: 'utf-8' }));
-			// res.end(JSON.stringify(data));
 		default:
 			res.end('Welcome to logbook logging server');
 	}
@@ -43,7 +41,7 @@ io.on('connection', (socket) => {
 		fs.writeFileSync('logs/logs.json', JSON.stringify(logsData));
 		// single object
 		io.emit('logs-data-received', datum);
-	})
+	});
 });
 
 const port = 49100;
