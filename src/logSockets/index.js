@@ -1,12 +1,12 @@
 import fs from 'fs';
 import {
 	VALID_ACTIVE_CONNECTIONS,
-	DEFAULT_METRICS,
 } from '../constants';
 import { default as LogSocket } from './log';
 import { MetricsListingUtility } from '../utility';
 
 export default (io) => {
+	const clients = [];
 	/**
 	 * this callback will be executed whenever a new client
 	 * connection is made. Initially we can maintain a global
@@ -17,10 +17,18 @@ export default (io) => {
 	 * without making a new build of the proposed system.
 	 */
 	io.on('connection', (socket) => {
-		console.log(`${io.clients.length} clients connected`);
-		if (io.clients.length > VALID_ACTIVE_CONNECTIONS) {
-			throw new Error(`Only ${VALID_ACTIVE_CONNECTIONS} nodes are allowed to connect.`);
+		if (clients.length === Number(VALID_ACTIVE_CONNECTIONS)) {
+			/**
+			 * Emit a message when logbook connection is failed to establish
+			 * This could be handled to notify the client that a specific pack
+			 * con only link the following amount of nodes.
+			 */
+			socket.emit('logbook-connection-error', { message: `Cannot connect with more than ${VALID_ACTIVE_CONNECTIONS} node(s) at a time.` })
+			socket.disconnect();
+			return;
 		}
+		// keep a collection of connected clients/nodes
+		clients.push(socket.client);
 		const content = fs.readFileSync('logs/logs.json', { encoding: 'utf-8' });
 		socket.emit('logbook-connected', JSON.parse(content));
 
@@ -34,6 +42,12 @@ export default (io) => {
 			console.log(`Listening to socket ${metric}`);
 		});
 
-		socket.on('disconnect', () => console.log('Disconnected from client'));
+		socket.on('disconnect', () => {
+			/**
+			 * remove from the list of clients so that other clients can connect.
+			 */
+			clients.splice(clients.indexOf(socket.id.toString()), 1);
+			console.log('Disconnected from client')
+		});
 	});
 }
