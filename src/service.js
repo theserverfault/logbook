@@ -1,6 +1,7 @@
 import http from 'http';
 import socketIO from 'socket.io';
 import fs from 'fs';
+import logSocketsInitializer from './logSockets';
 /**
  * @description This is the default service that will be doing something and will
  * eventually be imported in index.js and hence exported. Feel free to play around
@@ -28,21 +29,7 @@ fs.writeFileSync('logs/logs.json', JSON.stringify([{ date: new Date(), payload: 
 const server = http.createServer(handler);
 const io = socketIO(server, {});
 
-io.on('connection', (socket) => {
-	console.log(`Socket connetion established and it's id is ${socket.id}`);
-	const content = fs.readFileSync('logs/logs.json', { encoding });
-	// array
-	socket.emit('logbook-connected', JSON.parse(content));
-
-	socket.on('log-event', (data) => {
-		const logsData = JSON.parse(fs.readFileSync('logs/logs.json', { encoding: 'utf-8' }));
-		const datum = { date: new Date(), payload: data }
-		logsData.push(datum);
-		fs.writeFileSync('logs/logs.json', JSON.stringify(logsData));
-		// single object
-		io.emit('logs-data-received', datum);
-	});
-});
+logSocketsInitializer(io);
 
 const port = 49100;
 server.listen(port, done => console.log(`socket.io running on port ${port}`));
